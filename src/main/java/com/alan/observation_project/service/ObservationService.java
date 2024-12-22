@@ -16,11 +16,16 @@ import com.alan.observation_project.entity.Observation.QualiteIdentification;
 import com.alan.observation_project.entity.PoissonObservation;
 import com.alan.observation_project.entity.PoissonObservation.Poisson;
 import com.alan.observation_project.exception.InvalidAnimalMarinException;
+import com.alan.observation_project.exception.InvalidIlotException;
+import com.alan.observation_project.repository.IlotRepository;
 import com.alan.observation_project.repository.MammifereMarinRepository;
 import com.alan.observation_project.repository.ObservationRepository;
 import com.alan.observation_project.repository.PoissonRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ObservationService {
 
     private static final String POISSON = "POISSON";
@@ -28,12 +33,7 @@ public class ObservationService {
     private final ObservationRepository observationRepository;
     private final MammifereMarinRepository mammifereMarinRepository;
     private final PoissonRepository poissonRepository;
-
-    public ObservationService(ObservationRepository observationRepository, MammifereMarinRepository mammifereMarinRepository, PoissonRepository poissonRepository) {
-        this.observationRepository = observationRepository;
-        this.mammifereMarinRepository = mammifereMarinRepository;
-        this.poissonRepository = poissonRepository;
-    }
+    private final IlotRepository ilotRepository;
 
     @Cacheable(value = "observations", key = "#animalMarin == null ? 'all' : #animalMarin")
     public List<Observation> getObservations(String animalMarin) {
@@ -58,16 +58,19 @@ public class ObservationService {
 
     @CacheEvict(value = "observations", allEntries = true)
     public Observation createObservation(ObservationDto observationDto) {
-        Observation observation;
+        final Observation observation;
 
+        if (!ilotRepository.existsById(observationDto.getIlot())) {
+            throw new InvalidIlotException("L'îlot avec l'ID " + observationDto.getIlot() + " n'existe pas.");
+        }
         if (MAMMIFERE.equals(observationDto.getType())) {
-            MammifereObservation mammifereObs = new MammifereObservation();
+            final MammifereObservation mammifereObs = new MammifereObservation();
             mammifereObs.setTailleEstimee(observationDto.getTailleEstimee());
             mammifereObs.setTempsApneeObserve(observationDto.getTempsApneeObserve());
             mammifereObs.setTypeMammifere(MammifereMarin.valueOf(observationDto.getAnimalMarin()));
             observation = mammifereObs;
         } else if (POISSON.equals(observationDto.getType())) {
-            PoissonObservation poissonObs = new PoissonObservation();
+            final PoissonObservation poissonObs = new PoissonObservation();
             poissonObs.setEstUnBanc(observationDto.getEstUnBanc());
             poissonObs.setNombreIndividus(observationDto.getNombreIndividus());
             poissonObs.setTypePoisson(Poisson.valueOf(observationDto.getAnimalMarin()));

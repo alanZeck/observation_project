@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alan.observation_project.entity.MammifereObservation;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class CacheTest {
 
-    @Autowired
+    @InjectMocks
     private ObservationService observationService;
 
     @Mock
@@ -38,7 +38,6 @@ class CacheTest {
         List<Observation> observations = List.of(observation);
 
         Mockito.when(observationRepository.findAll()).thenReturn(observations);
-
         // Premier appel : la méthode est exécutée
         List<Observation> result = observationService.getObservations(null);
         assertThat(result).hasSize(1);
@@ -46,7 +45,6 @@ class CacheTest {
         // Deuxième appel : récupéré du cache
         List<Observation> cachedResult = observationService.getObservations(null);
         Mockito.verify(observationRepository, Mockito.times(1)).findAll();
-
         assertThat(result).isEqualTo(cachedResult);
     }
 }
