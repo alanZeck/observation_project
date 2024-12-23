@@ -1,4 +1,15 @@
 lien pour utiliser swagger : http://localhost:8080/swagger-ui/index.html
+exemple post json pour création d'observation :
+{
+  "type": "MAMMIFERE",
+  "animalMarin": "CACHALOT",
+  "ilot": "ff80818167a5556c0167a5559e030001",
+  "distanceBord": 150,
+  "dateObservation": "2024-12-23T00:39:00",
+  "qualite": "VERIFIE",
+  "tailleEstimee": 100,
+  "nombreIndividus": 1
+}
 
 Pistes d'améliorations :
   - Une meilleur gestion des exceptions avec une gestion plus fine de validation des champs (créer une annotation spécifique ?) qui nous permettrait d'avoir une meilleur gestion des responseCodes.
