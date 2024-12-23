@@ -14,8 +14,6 @@ import lombok.EqualsAndHashCode;
 @DiscriminatorValue("MAMMIFERE")
 public class MammifereObservation extends Observation {
 
-    private Double tailleEstimee;
-
     private Integer tempsApneeObserve;
 
     @NotNull(message = "le type de mammifere marin doit être renseignée")

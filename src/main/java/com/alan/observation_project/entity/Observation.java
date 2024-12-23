@@ -28,6 +28,8 @@ public abstract class Observation {
     @NotNull(message = "la date d'observation doit être renseignée")
     private LocalDateTime dateObservation;
 
+    private Double tailleEstimee;
+
     @NotNull(message = "la qualité de l'observation doit être renseignée")
     @Enumerated(EnumType.STRING)
     private QualiteIdentification qualite;

@@ -72,6 +72,11 @@ public class ObservationService {
         } else if (POISSON.equals(observationDto.getType())) {
             final PoissonObservation poissonObs = new PoissonObservation();
             poissonObs.setEstUnBanc(observationDto.getEstUnBanc());
+            if(Boolean.TRUE.equals(observationDto.getEstUnBanc()) && (observationDto.getNombreIndividus() == null || observationDto.getNombreIndividus() < 2)) {
+                throw new IllegalArgumentException("le nombre d'individus doit être strictement supérieur à 1 : " + observationDto.getNombreIndividus());
+            } else {
+                poissonObs.setTailleEstimee(observationDto.getTailleEstimee());
+            }  
             poissonObs.setNombreIndividus(observationDto.getNombreIndividus());
             poissonObs.setTypePoisson(Poisson.valueOf(observationDto.getAnimalMarin()));
             observation = poissonObs;
