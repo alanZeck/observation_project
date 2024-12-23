@@ -36,7 +36,8 @@ public class ObservationService {
     private final IlotRepository ilotRepository;
 
     @Cacheable(value = "observations", key = "#animalMarin == null ? 'all' : #animalMarin")
-    public List<Observation> getObservations(String animalMarin) {
+    public List<ObservationDto> getObservations(String animalMarin) {
+        final List<Observation> observations;
         if (animalMarin != null) {
             boolean isPoisson = Arrays.stream(Poisson.values())
                 .anyMatch(poisson -> poisson.name().equalsIgnoreCase(animalMarin));
@@ -45,15 +46,19 @@ public class ObservationService {
                 .anyMatch(mammifere -> mammifere.name().equalsIgnoreCase(animalMarin));
 
             if (isPoisson) {
-                return poissonRepository.findByPoisson(Poisson.valueOf(animalMarin));
+                observations = poissonRepository.findByPoisson(Poisson.valueOf(animalMarin));
             } else if (isMammifere) {
-                return mammifereMarinRepository.findByMammifereMarin(MammifereMarin.valueOf(animalMarin));
+                observations = mammifereMarinRepository.findByMammifereMarin(MammifereMarin.valueOf(animalMarin));
             } else {
                 throw new InvalidAnimalMarinException("Animal marin invalide : " + animalMarin);
             }
+        } else {
+            observations = observationRepository.findAll();
         }
 
-        return observationRepository.findAll();
+        return observations.stream()
+                    .map(this::toDto)
+                    .toList();
     }
 
     @CacheEvict(value = "observations", allEntries = true)
@@ -90,5 +95,27 @@ public class ObservationService {
         observation.setQualite(QualiteIdentification.valueOf(observationDto.getQualite()));
 
         return observationRepository.save(observation);
+    }
+
+    private ObservationDto toDto(Observation observation) {
+        ObservationDto dto = new ObservationDto();
+        dto.setIlot(observation.getIlot());
+        dto.setDistanceBord(observation.getDistanceBord());
+        dto.setDateObservation(observation.getDateObservation().toString());
+        dto.setQualite(observation.getQualite().name());
+        dto.setTailleEstimee(observation.getTailleEstimee());
+
+        if (observation instanceof MammifereObservation mammifereObservation) {
+            dto.setType(MAMMIFERE);
+            dto.setAnimalMarin(mammifereObservation.getTypeMammifere().name());
+            dto.setTempsApneeObserve(mammifereObservation.getTempsApneeObserve());
+        } else if (observation instanceof PoissonObservation poissonObservation) {
+            dto.setType(POISSON);
+            dto.setAnimalMarin(poissonObservation.getTypePoisson().name());
+            dto.setEstUnBanc(poissonObservation.getEstUnBanc());
+            dto.setNombreIndividus(poissonObservation.getNombreIndividus());
+        }
+
+        return dto;
     }
 }
