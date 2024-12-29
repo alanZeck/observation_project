@@ -13,6 +13,5 @@ import com.alan.observation_project.enums.EspeceMammifereMarin;
 @Repository
 public interface MammifereMarinRepository extends JpaRepository<MammifereObservation, Long> {
 
-    //@Query("SELECT o FROM Observation o WHERE o.typeMammifere = :animalMarin")
     List<Observation> findByEspeceMammifereMarin(@Param("animalMarin") EspeceMammifereMarin especeMammifereMarin);
 }
