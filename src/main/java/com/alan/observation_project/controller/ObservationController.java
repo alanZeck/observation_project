@@ -47,13 +47,13 @@ public class ObservationController {
         description = "Permet de créer une nouvelle observation d'animal marin à partir des données fournies dans le corps de la requête."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Observation créée avec succès", content = @Content(schema = @Schema(implementation = Observation.class))),
+        @ApiResponse(responseCode = "200", description = "Observation créée avec succès", content = @Content(schema = @Schema(implementation = ObservationDto.class))),
         @ApiResponse(responseCode = "400", description = "Requête invalide (données manquantes ou incorrectes)", content = @Content),
         @ApiResponse(responseCode = "500", description = "Erreur interne du serveur", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Observation> createObservation(@Valid @RequestBody ObservationDto dto) {
-        return ResponseEntity.ok(service.createObservation(dto));
+    public ObservationDto createObservation(@Valid @RequestBody ObservationDto dto) {
+        return service.createObservation(dto);
     }
 
     /**
@@ -70,11 +70,11 @@ public class ObservationController {
         description = "Récupère la liste des observations d'animaux marins. Permet de filtrer par type d'animal marin (mammifère ou poisson) en utilisant un paramètre facultatif."
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Liste des observations récupérée avec succès", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Observation.class)))),
+        @ApiResponse(responseCode = "200", description = "Liste des observations récupérée avec succès", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ObservationDto.class)))),
         @ApiResponse(responseCode = "500", description = "Erreur interne du serveur", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<ObservationDto>> getObservations(@RequestParam(required = false) String animalMarin) {
-        return ResponseEntity.ok(service.getObservations(animalMarin));
+    public List<ObservationDto> getObservations(@RequestParam(required = false) String animalMarin) {
+        return service.getObservations(animalMarin);
     }
 }

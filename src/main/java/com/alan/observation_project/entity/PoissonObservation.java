@@ -1,5 +1,7 @@
 package com.alan.observation_project.entity;
 
+import com.alan.observation_project.enums.EspecePoisson;
+
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,20 +13,16 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@DiscriminatorValue("POISSON")
+@DiscriminatorValue(PoissonObservation.POISSON)
 public class PoissonObservation extends Observation {
 
-    private Boolean estUnBanc;
+    private static final String POISSON = "POISSON";
+
+    private boolean estUnBanc;
 
     private Integer nombreIndividus;
 
-    @NotNull(message = "le type de poisson doit être renseignée")
+    @NotNull(message = "le type de poisson doit être renseigné")
     @Enumerated(EnumType.STRING)
-    private Poisson typePoisson;
-
-    public enum Poisson {
-        RAIE_MANTA,
-        THON_A_DENT_DE_CHIEN,
-        THAZARD
-    }
+    private EspecePoisson especePoisson;
 }

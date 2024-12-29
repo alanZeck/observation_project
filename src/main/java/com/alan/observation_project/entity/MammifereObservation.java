@@ -1,5 +1,7 @@
 package com.alan.observation_project.entity;
 
+import com.alan.observation_project.enums.EspeceMammifereMarin;
+
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,19 +13,14 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@DiscriminatorValue("MAMMIFERE")
+@DiscriminatorValue(MammifereObservation.MAMMIFERE)
 public class MammifereObservation extends Observation {
+
+    private static final String MAMMIFERE = "MAMMIFERE";
 
     private Integer tempsApneeObserve;
 
-    @NotNull(message = "le type de mammifere marin doit être renseignée")
+    @NotNull(message = "le type de mammifere marin doit être renseigné")
     @Enumerated(EnumType.STRING)
-    private MammifereMarin typeMammifere;
-
-    public enum MammifereMarin {
-        BALEINE_A_BOSSE,
-        DAUPHIN_TURSIOPE,
-        DUGONG,
-        CACHALOT
-    }
+    private EspeceMammifereMarin especeMammifereMarin;
 }
